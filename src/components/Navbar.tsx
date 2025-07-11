@@ -1,27 +1,115 @@
 
-import React from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { Menu, X } from 'lucide-react';
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
+
   return (
-    <header className="border-b border-gray-100">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <span className="text-xl font-semibold">Brand</span>
+    <header className="sticky top-0 z-40 w-full border-b bg-background">
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center gap-6">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="text-2xl font-bold">Galanfi</span>
+          </Link>
+          <nav className="hidden md:flex gap-6">
+            <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
+              Home
+            </Link>
+            <Link to="/market" className="text-sm font-medium transition-colors hover:text-primary">
+              Market
+            </Link>
+            <a href="#features" className="text-sm font-medium transition-colors hover:text-primary">
+              Features
+            </a>
+            <a href="#about" className="text-sm font-medium transition-colors hover:text-primary">
+              About
+            </a>
+          </nav>
         </div>
-        
-        <nav className="hidden md:flex space-x-8">
-          <a href="#" className="text-gray-200 hover:text-fuchsia-500 transition-colors">Home</a>
-          <a href="#features" className="text-gray-200 hover:text-fuchsia-500 transition-colors">Features</a>
-          <a href="#" className="text-gray-200 hover:text-fuchsia-500 transition-colors">About</a>
-          <a href="#" className="text-gray-200 hover:text-fuchsia-500 transition-colors">Contact</a>
-        </nav>
-        
-        <div className="flex items-center">
-          <Button variant="outline" className="mr-2 hidden md:inline-flex">Log in</Button>
-          <Button className="px-8 rounded-md bg-gradient-to-br from-blue-700 to-blue-900 text-white hover:from-blue-600 hover:to-fuchsia-600 transition-colors">Sign Up</Button>
+        <div className="hidden md:flex items-center gap-4">
+          {user ? (
+            <Button asChild>
+              <Link to="/dashboard">Dashboard</Link>
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" asChild>
+                <Link to="/login">Sign In</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/register">Sign Up</Link>
+              </Button>
+            </>
+          )}
         </div>
+        <button
+          className="flex md:hidden"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
+      {isMenuOpen && (
+        <div className="md:hidden border-b">
+          <div className="container py-4 flex flex-col gap-4">
+            <Link
+              to="/"
+              className="text-sm font-medium transition-colors hover:text-primary"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link
+              to="/market"
+              className="text-sm font-medium transition-colors hover:text-primary"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Market
+            </Link>
+            <a
+              href="#features"
+              className="text-sm font-medium transition-colors hover:text-primary"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Features
+            </a>
+            <a
+              href="#about"
+              className="text-sm font-medium transition-colors hover:text-primary"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              About
+            </a>
+            <div className="flex flex-col gap-2 pt-2 border-t">
+              {user ? (
+                <Button asChild>
+                  <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                    Dashboard
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" asChild>
+                    <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                      Sign In
+                    </Link>
+                  </Button>
+                  <Button asChild>
+                    <Link to="/register" onClick={() => setIsMenuOpen(false)}>
+                      Sign Up
+                    </Link>
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
